@@ -11,10 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,11 +21,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ConcurrencyTests {
     @Autowired
     private BookService service;
-    private volatile CountDownLatch latch = null;
+    private volatile CyclicBarrier barrier = null;
 
     @BeforeEach
     public void beforeEach() {
-        latch = new CountDownLatch(1);
+        barrier = new CyclicBarrier(2);
     }
 
     @Test
@@ -41,9 +38,6 @@ class ConcurrencyTests {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         executor.execute(() -> edit(id, "TEST_1"));
         executor.execute(() -> edit(id, "TEST_2"));
-
-        Thread.sleep(50);
-        latch.countDown();
 
         executor.shutdown();
         executor.awaitTermination(100, TimeUnit.MILLISECONDS);
@@ -77,9 +71,8 @@ class ConcurrencyTests {
             service.getBookById(id);
 
             // Ждем старта, одновременно редактируем
-            if (latch.await(100, TimeUnit.MILLISECONDS)) {
-                service.editBookTitle(id, title);
-            }
+            barrier.await(100, TimeUnit.MILLISECONDS);
+            service.editBookTitle(id, title);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
