@@ -8,30 +8,35 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class ApplicationTests {
+class FunctionalTests {
 	@Autowired
 	private BookService service;
 
 	@Test
 	void createBookWithoutAuthors() {
-		service.createBook("MY VERY FIRST BOOK", Collections.emptyList());
+		List<String> authors = Collections.emptyList();
+		Long id  = service.createBook("MY VERY FIRST BOOK", authors);
+		assertThat(id).isNotNull();
 	}
 
 	@Test
 	void createBookWithMultipleAuthors() {
-		service.createBook("THE BEST BOOK IN THE WORLD", Arrays.asList("ME", "SOMEBODY"));
+		List<String> authors = Arrays.asList("ME", "SOMEBODY");
+		Long id = service.createBook("THE BEST BOOK IN THE WORLD", authors);
+		assertThat(id).isNotNull();
 	}
 
 	@Test
-	void createBookAndEdit() {
+	void createBookThenEdit() {
 		Long id = service.createBook("BOOK_V1", Collections.emptyList());
 		BookDTO created = service.getBookById(id);
 		assertThat(created.getTitle()).isEqualTo("BOOK_V1");
-		assertThat(created.getVersion()).isEqualTo(0);
+		assertThat(created.getVersion()).isZero();
 
 		service.editBookTitle(id, "BOOK_V2");
 		BookDTO edited = service.getBookById(id);

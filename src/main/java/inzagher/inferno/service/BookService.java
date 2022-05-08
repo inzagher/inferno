@@ -3,6 +3,7 @@ package inzagher.inferno.service;
 import inzagher.inferno.dto.BookDTO;
 import inzagher.inferno.entity.AuthorEntity;
 import inzagher.inferno.entity.BookEntity;
+import inzagher.inferno.exception.BookServiceException;
 import inzagher.inferno.mapper.BookMapper;
 import inzagher.inferno.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,16 @@ public class BookService {
         BookEntity entity = repository.getById(id);
         entity.setTitle(title);
         repository.save(entity);
+    }
+
+    @Transactional
+    public void editBookTitle(Long id, String title, Long version) {
+        BookEntity entity = repository.getById(id);
+        if (entity.getVersion().equals(version)) {
+            entity.setTitle(title);
+            repository.save(entity);
+        } else {
+            throw new BookServiceException("CONCURRENT_UPDATE");
+        }
     }
 }
