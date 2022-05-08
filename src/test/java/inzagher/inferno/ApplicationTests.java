@@ -22,4 +22,10 @@ class ApplicationTests {
 	void createBookWithMultipleAuthors() {
 		service.createBook("THE BEST BOOK IN THE WORLD", Arrays.asList("ME", "SOMEBODY"));
 	}
+
+	@Test
+	void createBookAndEdit() {
+		Long id = service.createBook("BOOK_V1", Collections.emptyList());
+		service.editBookTitle(id, "BOOK_V2");
+	}
 }
