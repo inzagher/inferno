@@ -1,11 +1,12 @@
 spring:
   datasource:
-    driver-class-name: "org.h2.Driver"
-    url: "jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;"
+    url: "jdbc:postgresql://inferno-postgresql-server:5432/inferno"
+    username: sa
+    password: 12345
   flyway:
     table: "migrations"
     locations: "classpath:database_migrations"
-  jpa.properties.hibernate:
-    dialect: "org.hibernate.dialect.H2Dialect"
-    show_sql: true
-    hbm2ddl.auto: none
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate.ddl-auto: none
+    show-sql: true

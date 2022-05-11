@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  database:
+    container_name: "inferno-postgresql-server"
+    image: "postgres:9.6-alpine"
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_USER=sa"
+      - "POSTGRES_PASSWORD=12345"
+      - "POSTGRES_DB=inferno"
+  backend:
+    build: .
+    image: "inzagher/inferno-backend-server"
+    container_name: "inferno-backend-server"
+    depends_on:
+      - "database"
+    ports:
+      - "8080:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"

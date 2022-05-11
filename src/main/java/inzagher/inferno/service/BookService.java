@@ -54,4 +54,9 @@ public class BookService {
             throw new BookServiceException("CONCURRENT_UPDATE");
         }
     }
+
+    @Transactional
+    public void deleteBookById(Long id) {
+        repository.deleteById(id);
+    }
 }
