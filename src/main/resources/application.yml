@@ -1,10 +1,12 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://inferno-postgresql-server:5432/inferno"
-    username: sa
-    password: 12345
+    url: "jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:inferno}"
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:12345}
   flyway:
     table: "migrations"
+    defaultSchema: "library"
+    schemas: "library"
     locations: "classpath:database_migrations"
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

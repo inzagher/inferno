@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "books")
+@Table(name = "books", schema = "library")
 public class BookEntity implements Serializable {
 
     @Id

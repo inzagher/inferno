@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: "org.h2.Driver"
-    url: "jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;"
+    url: "jdbc:h2:mem:test_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS library;"
   flyway.enabled: false
   jpa.properties.hibernate:
     dialect: "org.hibernate.dialect.H2Dialect"

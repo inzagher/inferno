@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "authors")
+@Table(name = "authors", schema = "library")
 public class AuthorEntity implements Serializable {
 
     @Id
