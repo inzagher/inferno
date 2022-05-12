@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,8 +79,10 @@ class ConcurrencyTests {
             // Ждем старта, одновременно редактируем
             barrier.await(100, TimeUnit.MILLISECONDS);
             service.editBookTitle(id, title);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            log.info("Failed to edit book due to concurrency.", e);
         } catch (Exception e) {
-            log.warn("Failed to edit book.", e);
+            throw new RuntimeException("Unexpected error", e);
         }
     }
 }
