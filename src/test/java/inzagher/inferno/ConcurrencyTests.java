@@ -3,6 +3,7 @@ package inzagher.inferno;
 import inzagher.inferno.dto.BookDTO;
 import inzagher.inferno.exception.BookServiceException;
 import inzagher.inferno.service.BookService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.concurrent.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
+@Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional(propagation = Propagation.NEVER)
@@ -42,7 +43,9 @@ class ConcurrencyTests {
         executor.execute(() -> edit(id, "TEST_2"));
 
         executor.shutdown();
-        executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+        if (!executor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+            fail("Background tasks still executing.");
+        }
 
         BookDTO edited = service.getBookById(id);
         assertThat(edited.getTitle()).isIn("TEST_1", "TEST_2");
@@ -76,7 +79,7 @@ class ConcurrencyTests {
             barrier.await(100, TimeUnit.MILLISECONDS);
             service.editBookTitle(id, title);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.warn("Failed to edit book.", e);
         }
     }
 }
