@@ -19,7 +19,7 @@ public class AuthorEntity implements Serializable {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "fullName", nullable = false)
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     public AuthorEntity(String fullName) {
