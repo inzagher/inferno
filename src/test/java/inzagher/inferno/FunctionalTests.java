@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -44,6 +46,12 @@ class FunctionalTests {
 		BookDTO edited = service.getBookById(id);
 		assertThat(edited.getTitle()).isEqualTo("BOOK_V2");
 		assertThat(edited.getVersion()).isEqualTo(1);
+	}
+
+	@Test
+	void tryEditMissingBook() {
+		assertThatThrownBy(() -> service.editBookTitle(1000L, "MISSING_BOOK"))
+				.isExactlyInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test
